@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Рестораны{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Рестораны на карте</h2>
+
+    <form method="GET" class="styled-form filter-form">
+        <label>Поиск</label>
+        <input type="text" name="search" value="{{ request.args.get('search', '') }}">
+
+        <label>Кухня</label>
+        <input type="text" name="cuisine" value="{{ request.args.get('cuisine', '') }}">
+
+        <button class="btn" type="submit">Искать</button>
+    </form>
+
+    <div id="map" class="map-box"></div>
+
+    <script>
+        const restaurantsData = ({ map_data ,tojson });
+        initRestaurantsMap(restaurantsData);
+    </script>
+</section>
+
+<section class="section">
+    <div class="cards">
+        {% for restaurant in restaurants %}
+        <div class="card">
+            <h3>{{ restaurant.name }}</h3>
+            <p>{{ restaurant.cuisine }}</p>
+            <p>{{ restaurant.address }}</p>
+            <p>Средний чек: {{ restaurant.average_check }} ₽</p>
+            <p>Рейтинг: {{ average_rating(restaurant) }}/5</p>
+            <a class="btn small-btn" href="{{ url_for('main.restaurant_detail', restaurant_id=restaurant.id) }}">Подробнее</a>
+        </div>
+        {% else %}
+        <p>Рестораны не найдены</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

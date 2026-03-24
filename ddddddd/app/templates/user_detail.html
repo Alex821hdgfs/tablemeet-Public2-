@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="profile-grid">
+    <div class="card">
+        <h2>{{ user.name }}</h2>
+        {% if user.avatar %}
+            <img class="avatar-large" src="{{ url_for('static', filename='uploads/' + user.avatar) }}" alt="">
+        {% endif %}
+        <p>Возраст: {{ user.age or 'не указан' }}</p>
+        <p>Пол: {{ user.gender or 'не указан' }}</p>
+        <p>О себе: {{ user.about or 'нет описания' }}</p>
+
+        {% if current_user.id != user.id %}
+            <a class="btn" href="{{ url_for('main.chat', user_id=user.id) }}">Написать</a>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Фотографии</h3>
+        <div class="gallery">
+            {% for photo in user.profile_photos %}
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="">
+            </div>
+            {% else %}
+            <p>Фотографий нет</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

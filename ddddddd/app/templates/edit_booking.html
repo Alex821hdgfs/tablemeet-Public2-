@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать бронь{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <form method="POST" class="styled-form">
+        {{ form.hidden_tag() }}
+        <h2>Редактирование брони</h2>
+
+        <label>{{ form.booking_date.label }}</label>
+        {{ form.booking_date(type="date") }}
+
+        <label>{{ form.booking_time.label }}</label>
+        {{ form.booking_time(type="time") }}
+
+        <label>{{ form.guests.label }}</label>
+        {{ form.guests(id="guests") }}
+
+        <div id="companion-block">
+            <label>{{ form.need_companion.label }}</label>
+            {{ form.need_companion() }}
+
+            <label>{{ form.preferred_gender.label }}</label>
+            {{ form.preferred_gender() }}
+
+            <label>{{ form.preferred_age_min.label }}</label>
+            {{ form.preferred_age_min() }}
+
+            <label>{{ form.preferred_age_max.label }}</label>
+            {{ form.preferred_age_max() }}
+
+            <label>{{ form.companion_comment.label }}</label>
+            {{ form.companion_comment() }}
+        </div>
+
+        <label>{{ form.comment.label }}</label>
+        {{ form.comment() }}
+
+        {{ form.submit(class="btn full-btn") }}
+    </form>
+</div>
+{% endblock %}

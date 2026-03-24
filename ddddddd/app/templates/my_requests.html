@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Мои запросы{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Входящие запросы</h2>
+    <div class="cards">
+        {% for req in received %}
+        <div class="card">
+            <h3>{{ req.from_user.name }}</h3>
+            <p>Ресторан: {{ req.booking.restaurant.name }}</p>
+            <p>Дата: {{ req.booking.booking_date }}</p>
+            <p>Время: {{ req.booking.booking_time }}</p>
+            <p>Сообщение: {{ req.message or 'Нет сообщения' }}</p>
+            <p>Статус: {{ req.status }}</p>
+
+            <a class="btn small-btn" href="{{ url_for('main.user_detail', user_id=req.from_user.id) }}">Профиль</a>
+
+            {% if req.status == 'pending' %}
+                <a class="btn small-btn" href="{{ url_for('main.accept_request', request_id=req.id) }}">Принять</a>
+                <a class="btn small-btn danger-btn" href="{{ url_for('main.reject_request', request_id=req.id) }}">Отклонить</a>
+                <a class="btn small-btn" href="{{ url_for('main.chat', user_id=req.from_user.id) }}">Чат</a>
+            {% elif req.status == 'accepted' %}
+                <a class="btn small-btn" href="{{ url_for('main.chat', user_id=req.from_user.id) }}">Открыть чат</a>
+            {% endif %}
+        </div>
+        {% else %}
+        <p>Нет входящих запросов</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2>Исходящие запросы</h2>
+    <div class="cards">
+        {% for req in sent %}
+        <div class="card">
+            <h3>{{ req.to_user.name }}</h3>
+            <p>Ресторан: {{ req.booking.restaurant.name }}</p>
+            <p>Дата: {{ req.booking.booking_date }}</p>
+            <p>Время: {{ req.booking.booking_time }}</p>
+            <p>Сообщение: {{ req.message or 'Нет сообщения' }}</p>
+            <p>Статус: {{ req.status }}</p>
+
+            <a class="btn small-btn" href="{{ url_for('main.user_detail', user_id=req.to_user.id) }}">Профиль</a>
+
+            {% if req.status == 'pending' %}
+                <a class="btn small-btn danger-btn" href="{{ url_for('main.cancel_request', request_id=req.id) }}">Отменить заявку</a>
+            {% elif req.status == 'accepted' %}
+                <a class="btn small-btn" href="{{ url_for('main.chat', user_id=req.to_user.id) }}">Открыть чат</a>
+            {% endif %}
+        </div>
+        {% else %}
+        <p>Нет исходящих запросов</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

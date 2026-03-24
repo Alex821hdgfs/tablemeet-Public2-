@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Чат{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="card chat-card">
+        <h2>Чат с {{ other_user.name }}</h2>
+
+        <div id="chatMessages" class="chat-messages">
+            {% for msg in messages %}
+                <div class="message {% if msg.sender_id == current_user.id %}my-message{% else %}their-message{% endif %}">
+                    <div class="message-author">
+                        {% if msg.sender_id == current_user.id %}Вы{% else %}{{ other_user.name }}{% endif %}
+                    </div>
+                    <div class="message-text">{{ msg.text }}</div>
+                </div>
+            {% else %}
+                <p>Сообщений пока нет</p>
+            {% endfor %}
+        </div>
+
+        <div class="styled-form">
+            <label>Сообщение</label>
+            <textarea id="messageInput"></textarea>
+            <button class="btn" type="button" id="sendMessageBtn">Отправить</button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const socket = io();
+    const roomName = "{{ room_name }}";
+    const senderId = "{{ current_user.id }}";
+    const receiverId = "{{ other_user.id }}";
+    const senderName = "{{ current_user.name }}";
+
+    socket.emit('join', { room: roomName });
+
+    const chatMessages = document.getElementById('chatMessages');
+    const input = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendMessageBtn');
+
+    sendBtn.addEventListener('click', function () {
+        const text = input.value.trim();
+        if (!text) return;
+
+        socket.emit('send_message', {
+            room: roomName,
+            sender_id: senderId,
+            receiver_id: receiverId,
+            sender_name: senderName,
+            text: text
+        });
+
+        input.value = '';
+    });
+
+    socket.on('receive_message', function (data) {
+        const div = document.createElement('div');
+        div.className = 'message ' + (String(data.sender_id) === String(senderId) ? 'my-message' : 'their-message');
+
+        div.innerHTML = `
+            <div class="message-author">${String(data.sender_id) === String(senderId) ? 'Вы' : data.sender_name}</div>
+            <div class="message-text">${data.text}</div>
+        `;
+
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+</script>
+{% endblock %}

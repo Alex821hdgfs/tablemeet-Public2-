@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}{{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="restaurant-page">
+    <div class="card">
+        <h2>{{ restaurant.name }}</h2>
+
+        {% if restaurant.image %}
+            <img class="restaurant-main-image" src="{{ url_for('static', filename='uploads/' + restaurant.image) }}" alt="{{ restaurant.name }}">
+        {% endif %}
+
+        <p><strong>Кухня:</strong> {{ restaurant.cuisine }}</p>
+        <p><strong>Адрес:</strong> {{ restaurant.address }}</p>
+        <p><strong>Средний чек:</strong> {{ restaurant.average_check }} ₽</p>
+        <p><strong>Описание:</strong> {{ restaurant.description }}</p>
+        <p><strong>Средний рейтинг:</strong> {{ avg_rating }}/5</p>
+
+        <h3>Меню</h3>
+        <p>{{ restaurant.menu }}</p>
+
+        <div class="like-block">
+            {% if current_user.is_authenticated %}
+                <a class="btn small-btn" href="{{ url_for('main.like_restaurant', restaurant_id=restaurant.id) }}">
+                    {% if user_liked %}Убрать из избранного{% else %}Добавить в избранное{% endif %}
+                </a>
+            {% endif %}
+            <span>Лайков: {{ likes_count }}</span>
+        </div>
+
+        {% if current_user.is_authenticated %}
+            <a class="btn" href="{{ url_for('main.create_booking', restaurant_id=restaurant.id) }}">Забронировать</a>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Фотографии ресторана</h3>
+        <div class="gallery">
+            {% if restaurant.image %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='uploads/' + restaurant.image) }}" alt="">
+                </div>
+            {% endif %}
+            {% for photo in restaurant.photos %}
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="card">
+        <h3>Отзывы</h3>
+
+        {% if current_user.is_authenticated %}
+        <form method="POST" class="styled-form">
+            {{ review_form.hidden_tag() }}
+
+            <label>{{ review_form.rating.label }}</label>
+            {{ review_form.rating() }}
+
+            <label>{{ review_form.text.label }}</label>
+            {{ review_form.text() }}
+
+            {{ review_form.submit(class="btn") }}
+        </form>
+        {% endif %}
+
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-item">
+                <strong>{{ review.author.name }}</strong>
+                <span>Оценка: {{ review.rating }}/5</span>
+                <p>{{ review.text }}</p>
+                <a class="btn small-btn" href="{{ url_for('main.user_detail', user_id=review.author.id) }}">Профиль</a>
+            </div>
+            {% else %}
+            <p>Пока нет отзывов</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

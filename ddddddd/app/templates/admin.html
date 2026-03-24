@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Админка{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Админ-панель</h2>
+    <a class="btn" href="{{ url_for('admin.add_restaurant') }}">Добавить ресторан</a>
+</section>
+
+<section class="section">
+    <h2>Рестораны</h2>
+    <div class="cards">
+        {% for restaurant in restaurants %}
+        <div class="card">
+            <h3>{{ restaurant.name }}</h3>
+            <p>{{ restaurant.cuisine }}</p>
+            <p>{{ restaurant.address }}</p>
+            <a class="btn small-btn" href="{{ url_for('admin.edit_restaurant', restaurant_id=restaurant.id) }}">Редактировать</a>
+            <a class="btn small-btn danger-btn" href="{{ url_for('admin.delete_restaurant', restaurant_id=restaurant.id) }}">Удалить</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2>Пользователи</h2>
+    <div class="cards">
+        {% for user in users %}
+        <div class="card">
+            <h3>{{ user.name }}</h3>
+            <p>Email: {{ user.email }}</p>
+            <p>Телефон: {{ user.phone or '-' }}</p>
+            <p>Возраст: {{ user.age or '-' }}</p>
+            <p>Пол: {{ user.gender or '-' }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2>Брони</h2>
+    <div class="cards">
+        {% for booking in bookings %}
+        <div class="card">
+            <h3>{{ booking.user.name }}</h3>
+            <p>Ресторан: {{ booking.restaurant.name }}</p>
+            <p>Дата: {{ booking.booking_date }}</p>
+            <p>Время: {{ booking.booking_time }}</p>
+            <p>Статус: {{ booking.status }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать ресторан{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <form method="POST" enctype="multipart/form-data" class="styled-form">
+        {{ form.hidden_tag() }}
+        <h2>Редактировать ресторан</h2>
+
+        <label>{{ form.name.label }}</label>
+        {{ form.name() }}
+
+        <label>{{ form.cuisine.label }}</label>
+        {{ form.cuisine() }}
+
+        <label>{{ form.address.label }}</label>
+        {{ form.address() }}
+
+        <label>{{ form.description.label }}</label>
+        {{ form.description() }}
+
+        <label>{{ form.average_check.label }}</label>
+        {{ form.average_check() }}
+
+        <label>{{ form.menu.label }}</label>
+        {{ form.menu() }}
+
+        <label>{{ form.latitude.label }}</label>
+        {{ form.latitude() }}
+
+        <label>{{ form.longitude.label }}</label>
+        {{ form.longitude() }}
+
+        <label>{{ form.image.label }}</label>
+        {{ form.image() }}
+
+        <label>Дополнительные фото ресторана</label>
+        <input type="file" name="photos" multiple>
+
+        <div class="gallery">
+            {% if restaurant.image %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='uploads/' + restaurant.image) }}" alt="">
+                </div>
+            {% endif %}
+            {% for photo in restaurant.photos %}
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="">
+                <a class="btn small-btn danger-btn" href="{{ url_for('admin.delete_restaurant_photo', photo_id=photo.id) }}">Удалить</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {{ form.submit(class="btn full-btn") }}
+    </form>
+</div>
+{% endblock %}

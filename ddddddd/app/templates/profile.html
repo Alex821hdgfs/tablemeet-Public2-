@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-grid">
+    <div class="card">
+        <h2>Мой профиль</h2>
+        <form method="POST" enctype="multipart/form-data" class="styled-form">
+            {{ form.hidden_tag() }}
+
+            <label>{{ form.name.label }}</label>
+            {{ form.name() }}
+
+            <label>{{ form.phone.label }}</label>
+            {{ form.phone() }}
+
+            <label>{{ form.age.label }}</label>
+            {{ form.age() }}
+
+            <label>{{ form.gender.label }}</label>
+            {{ form.gender() }}
+
+            <label>{{ form.about.label }}</label>
+            {{ form.about() }}
+
+            <label>{{ form.avatar.label }}</label>
+            {{ form.avatar() }}
+
+            <label>Дополнительные фото</label>
+            <input type="file" name="photos" multiple>
+
+            {{ form.submit(class="btn full-btn") }}
+        </form>
+
+        {% if current_user.avatar %}
+            <img class="avatar-large" src="{{ url_for('static', filename='uploads/' + current_user.avatar) }}" alt="avatar">
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Мои фото</h3>
+        <div class="gallery">
+            {% for photo in current_user.profile_photos %}
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="">
+                <a class="btn small-btn danger-btn" href="{{ url_for('main.delete_user_photo', photo_id=photo.id) }}">Удалить</a>
+            </div>
+            {% else %}
+            <p>Фотографий пока нет</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <h2>Мои бронирования</h2>
+    <div class="cards">
+        {% for booking in bookings %}
+        <div class="card">
+            <h3>{{ booking.restaurant.name }}</h3>
+            <p>Дата: {{ booking.booking_date }}</p>
+            <p>Время: {{ booking.booking_time }}</p>
+            <p>Гостей: {{ booking.guests }}</p>
+            <p>Поиск компании: {{ 'Да' if booking.need_companion else 'Нет' }}</p>
+            <p>Статус: {{ booking.status }}</p>
+
+            <a class="btn small-btn" href="{{ url_for('main.edit_booking', booking_id=booking.id) }}">Редактировать</a>
+            <a class="btn small-btn danger-btn" href="{{ url_for('main.delete_booking', booking_id=booking.id) }}">Удалить</a>
+        </div>
+        {% else %}
+        <p>У вас пока нет бронирований</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2>Избранные рестораны</h2>
+    <div class="cards">
+        {% for restaurant in favorite_restaurants %}
+        <div class="card">
+            <h3>{{ restaurant.name }}</h3>
+            <p>{{ restaurant.cuisine }}</p>
+            <p>Рейтинг: {{ average_rating(restaurant) }}/5</p>
+            <a class="btn small-btn" href="{{ url_for('main.restaurant_detail', restaurant_id=restaurant.id) }}">Открыть</a>
+        </div>
+        {% else %}
+        <p>Пока нет избранных ресторанов</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

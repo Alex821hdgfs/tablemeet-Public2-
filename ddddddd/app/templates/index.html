@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Бронируйте столики и находите компанию</h1>
+        <p>Карта ресторанов, отзывы, чат, встречи и удобное бронирование</p>
+        <div class="hero-buttons">
+            <a class="btn" href="{{ url_for('main.restaurants') }}">Смотреть рестораны</a>
+            <a class="btn btn-light" href="{{ url_for('main.companions') }}">Найти компанию</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Популярные рестораны</h2>
+    <div class="cards">
+        {% for restaurant in restaurants %}
+        <div class="card">
+            <h3>{{ restaurant.name }}</h3>
+            <p>{{ restaurant.cuisine }}</p>
+            <p>{{ restaurant.address }}</p>
+            <p>Средний чек: {{ restaurant.average_check }} ₽</p>
+            <p>Рейтинг: {{ average_rating(restaurant) }}/5</p>
+            <a class="btn small-btn" href="{{ url_for('main.restaurant_detail', restaurant_id=restaurant.id) }}">Подробнее</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2>Сейчас ищут компанию</h2>
+    <div class="cards">
+        {% for booking in companion_bookings %}
+        <div class="card">
+            <h3>{{ booking.user.name }}</h3>
+            <p>Ресторан: {{ booking.restaurant.name }}</p>
+            <p>Дата: {{ booking.booking_date }}</p>
+            <p>Время: {{ booking.booking_time }}</p>
+            <p>{{ booking.companion_comment or 'Ищет компанию' }}</p>
+        </div>
+        {% else %}
+        <p>Пока нет активных заявок</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

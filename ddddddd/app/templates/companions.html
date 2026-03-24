@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Поиск компании{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Люди, которые ищут компанию</h2>
+
+    <form method="GET" class="styled-form filter-form">
+        <label>Пол</label>
+        <select name="gender">
+            <option>Не важно</option>
+            <option value="Мужчина">Мужчина</option>
+            <option value="Женщина">Женщина</option>
+        </select>
+
+        <label>Возраст от</label>
+        <input type="number" name="age_min">
+
+        <label>Возраст до</label>
+        <input type="number" name="age_max">
+
+        <button class="btn" type="submit">Фильтр</button>
+    </form>
+
+    <div class="cards">
+        {% for booking in bookings %}
+        <div class="card">
+            <h3>{{ booking.user.name }}</h3>
+            <p>Возраст: {{ booking.user.age or 'не указан' }}</p>
+            <p>Пол: {{ booking.user.gender or 'не указан' }}</p>
+            <p>Ресторан: {{ booking.restaurant.name }}</p>
+            <p>Дата: {{ booking.booking_date }}</p>
+            <p>Время: {{ booking.booking_time }}</p>
+            <p>{{ booking.companion_comment or '' }}</p>
+
+            <a class="btn small-btn" href="{{ url_for('main.user_detail', user_id=booking.user.id) }}">Профиль</a>
+
+            {% if current_user.is_authenticated and current_user.id != booking.user_id %}
+            <form method="POST" action="{{ url_for('main.companion_request', booking_id=booking.id) }}" class="styled-form">
+                {{ form.hidden_tag() }}
+                <label>{{ form.message.label }}</label>
+                {{ form.message() }}
+                {{ form.submit(class="btn small-btn") }}
+            </form>
+            {% endif %}
+        </div>
+        {% else %}
+        <p>Нет активных заявок</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
